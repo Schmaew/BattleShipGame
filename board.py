@@ -1,19 +1,26 @@
-from cell import Cell
-
 class Board:
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
-        self.grid = [[Cell() for _ in range(cols)] for _ in range(rows)]
+        self.board = [[None for _ in range(cols)] for _ in range(rows)]  
+
+    def is_empty(self, row, col):
+        return self.board[row][col] is None  
 
     def place_ship(self, ship, start_row, start_col, horizontal=True):
         if horizontal:
-            for col in range(start_col, start_col + ship.size):
-                self.grid[start_row][col].has_ship = True
+            for i in range(ship.size):
+                self.board[start_row][start_col + i] = ship
         else:
-            for row in range(start_row, start_row + ship.size):
-                self.grid[row][start_col].has_ship = True
+            for i in range(ship.size):
+                self.board[start_row + i][start_col] = ship
 
     def fire_at(self, row, col):
-        cell = self.grid[row][col]
-        return cell.fire()
+        if self.board[row][col] is None:
+            return False  
+        else:
+            ship = self.board[row][col]
+            hit = ship.hit()
+            if hit:  
+                self.board[row][col] = None  
+            return True  
